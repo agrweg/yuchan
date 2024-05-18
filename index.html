@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Game</title>
+    <style>
+        canvas {
+            border: 2px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        // Canvas 설정
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// 공의 초기 위치와 속도 설정
+let ballX = canvas.width / 2;
+let ballY = canvas.height - 30;
+let ballSpeedX = 2;
+let ballSpeedY = -2;
+const ballRadius = 10;
+
+// 바구니 설정
+const basketWidth = 80;
+const basketHeight = 20;
+const basketX = (canvas.width - basketWidth) / 2;
+const basketY = canvas.height - basketHeight;
+
+// 플레이어의 움직임 설정
+let playerX = (canvas.width - basketWidth) / 2;
+const playerWidth = 80;
+const playerHeight = 20;
+
+// 키보드 입력 처리
+document.addEventListener('keydown', movePlayer);
+
+function movePlayer(event) {
+    if (event.key === 'ArrowLeft' && playerX > 0) {
+        playerX -= 7;
+    } else if (event.key === 'ArrowRight' && playerX < canvas.width - playerWidth) {
+        playerX += 7;
+    }
+}
+
+// 게임 루프
+function draw() {
+    // 캔버스 클리어
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 공 그리기
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+    ctx.fillStyle = 'red';
+    ctx.fill();
+    ctx.closePath();
+
+    // 바구니 그리기
+    ctx.beginPath();
+    ctx.rect(playerX, canvas.height - playerHeight, playerWidth, playerHeight);
+    ctx.fillStyle = 'blue';
+    ctx.fill();
+    ctx.closePath();
+
+    // 공 이동
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
+
+    // 공이 벽에 부딪힐 때 처리
+    if (ballX + ballSpeedX > canvas.width - ballRadius || ballX + ballSpeedX < ballRadius) {
+        ballSpeedX = -ballSpeedX;
+    }
+    if (ballY + ballSpeedY < ballRadius) {
+        ballSpeedY = -ballSpeedY;
+    } else if (ballY + ballSpeedY > canvas.height - ballRadius) {
+        if (ballX > playerX && ballX < playerX + playerWidth) {
+            ballSpeedY = -ballSpeedY;
+        }
+    }
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+    </script>
+</body>
+</html>
